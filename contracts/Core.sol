@@ -6,8 +6,8 @@ import "./libraries/Ownable.sol";
 contract Core is Ownable {
     struct Addresses {
         address taxHelper;
+        address feeHelper;
         address revShare;
-
     }
 
     Addresses public addresses;
@@ -17,20 +17,28 @@ contract Core is Ownable {
     }
 
     // Setters and Getters
-    
-    setTaxHelperAddress(address _taxHelper) public onlyOwner {
+
+    function setTaxHelperAddress(address _taxHelper) public onlyOwner {
         addresses.taxHelper = _taxHelper;
     }
 
-    getTaxHelperAddress() public returns (address) {
+    function getTaxHelperAddress() public returns (address) {
         return addresses.taxHelper;
     }
 
-    setRevShareAddress(address _revShare) public onlyOwner {
+    function setFeeHelperAddress(address _feeHelper) public onlyOwner {
+        addresses.feeHelper = _feeHelper;
+    }
+
+    function getFeeHelperAddress() public returns (address) {
+        return addresses.feeHelper;
+    }
+
+    function setRevShareAddress(address _revShare) public onlyOwner {
         addresses.revShare = _revShare;
     }
 
-    getRevShareAddress() public returns (address) {
+    function getRevShareAddress() public returns (address) {
         return addresses.revShare;
     }
 
