@@ -1,5 +1,5 @@
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.20;
 
 import "./libraries/Ownable.sol";
 
@@ -12,8 +12,7 @@ contract Core is Ownable {
 
     Addresses public addresses;
 
-    constructor() {
-        _owner = msg.sender;
+    constructor() Ownable(msg.sender) {
     }
 
     // Setters and Getters

@@ -3,7 +3,7 @@
 
 pragma solidity 0.8.20;
 
-import "./libraries/Ownable.sol";
+import "../libraries/Ownable.sol";
 
 contract FeeHelper is Ownable{
     
@@ -15,7 +15,7 @@ contract FeeHelper is Ownable{
     
     Settings public SETTINGS;
     
-    constructor() {
+    constructor() Ownable(msg.sender) {
         SETTINGS.FEE = 100;
         SETTINGS.DENOMINATOR = 10000;
         SETTINGS.FEE_ADDRESS = payable(msg.sender);

@@ -12,3 +12,7 @@ npx hardhat node
 npx hardhat run scripts/deploy.js
 ```
 "# koopi-core" 
+
+Test Token: Boka Token
+
+Sepolia: 0x6CF22a29A59bF9232c09cAfbf15018b48d4809b2

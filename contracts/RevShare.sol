@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.20;
 
 import "./interfaces/IERC20.sol";
 import "./libraries/Ownable.sol";
 
-contract RevShare {
+contract RevShare is Ownable {
     address gasToken;
 
     Tier[] tiers;
@@ -22,8 +22,7 @@ contract RevShare {
     
     mapping(address => mapping(address => uint256)) public userBalances;
 
-    constructor(address _gasToken) {
-        _owner = msg.sender;
+    constructor(address _gasToken) Ownable(msg.sender) {
         gasToken = _gasToken;
     }
 

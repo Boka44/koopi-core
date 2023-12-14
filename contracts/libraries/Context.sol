@@ -2,7 +2,7 @@
 
 // File @openzeppelin/contracts/utils/Context.sol@v4.0.0
 
-pragma solidity ^0.7.0;
+pragma solidity 0.8.20;
 
 /*
  * @dev Provides information about the current execution context, including the
