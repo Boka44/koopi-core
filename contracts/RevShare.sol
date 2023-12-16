@@ -15,10 +15,7 @@ contract RevShare is Ownable {
         uint256 rewardPercentage;
     }
 
-    struct User {
-        address user;
-        uint256 tier;
-    }
+    uint256 public snapshot = 0;
     
     mapping(address => mapping(address => uint256)) public userBalances;
 
@@ -26,38 +23,64 @@ contract RevShare is Ownable {
         gasToken = _gasToken;
     }
 
+    event ClaimRevenue(address indexed user, address indexed token, uint256 amount);
+    event ApproveBalance(address indexed user, address indexed token, uint256 amount);
+    event AddTier(uint256 tier, uint256 requiredBalanceMin, uint256 rewardPercentage);
+    event RemoveTier(uint256 index);
+    event UpdateTier(uint256 index, uint256 tier, uint256 requiredBalanceMin, uint256 rewardPercentage);
+    event IncrementSnapshot(uint256 snapshot);
+
     function checkBalance(address user, address token) external view returns (uint256) {
         return userBalances[user][token];
     }
 
     function claimRevenue(address token, uint256 amount) external {
         // msg.sender can claim their userBalance 
-        if (userBalances[msg.sender][token] >= amount) {
-            userBalances[msg.sender][token] -= amount;
-            if(token == gasToken) {
-                payable(msg.sender).transfer(amount);
-            } else {
-                IERC20(token).transfer( msg.sender, amount);
-            }
+        require(userBalances[msg.sender][token] >= amount, "Insufficient balance");
+
+        userBalances[msg.sender][token] -= amount;
+        if(token == gasToken) {
+            payable(msg.sender).transfer(amount);
+        } else {
+            IERC20(token).transfer( msg.sender, amount);
         }
+        emit ClaimRevenue(msg.sender, token, amount);
     } 
 
     function approveBalance(address user, address token, uint256 amount) external onlyOwner {
         userBalances[user][token] += amount;
+        emit ApproveBalance(user, token, amount);
     }
 
     function addTier(uint256 tier, uint256 requiredBalanceMin, uint256 rewardPercentage) external onlyOwner{
         Tier memory newTier = Tier(tier, requiredBalanceMin, rewardPercentage);
         tiers.push(newTier);
+        emit AddTier(tier, requiredBalanceMin, rewardPercentage);
     }
 
-    function removeTier(uint256 tier) external onlyOwner {
-        delete tiers[tier];
+    function removeTier(uint256 index) external onlyOwner {
+        delete tiers[index];
+        emit RemoveTier(index);
     }
 
-    function updateTier(uint256 tier, uint256 requiredBalanceMin, uint256 rewardPercentage) external onlyOwner {
-        tiers[tier].requiredBalanceMin = requiredBalanceMin;
-        tiers[tier].rewardPercentage = rewardPercentage;
+    function updateTier(uint256 index, uint256 tier, uint256 requiredBalanceMin, uint256 rewardPercentage) external onlyOwner {
+        tiers[index].tier = tier;
+        tiers[index].requiredBalanceMin = requiredBalanceMin;
+        tiers[index].rewardPercentage = rewardPercentage;
+        emit UpdateTier(index, tier, requiredBalanceMin, rewardPercentage);  
+    }
+
+    function getTier(uint256 index) external view returns (Tier memory) {
+        return tiers[index];
+    }
+
+    function getTierCount() external view returns (uint256) {
+        return tiers.length;
+    }
+
+    function incrementSnapshot() external onlyOwner {
+        snapshot++;
+        emit IncrementSnapshot(snapshot);
     }
 
     // function getTierPercentage(address user, address token) external view returns (uint256) {
